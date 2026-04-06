@@ -1,15 +1,7 @@
 use degree_converter::{celsius_to_fahrenheit, fahrenheit_to_celsius};
 
 fn main() {
-    let input = read_input("Enter the temperature you want to convert");
-
-    let temperature = match input.trim().parse::<f64>() {
-        Ok(temperature) => temperature,
-        Err(_) => {
-            println!("Temperature is invalid.");
-            return;
-        }
-    };
+    let temperature = read_temperature();
 
     let input = read_input("Which unit would you like to convert to? (Fahrenheit or Celsius):");
     let unit = input.trim().to_lowercase();
@@ -30,7 +22,19 @@ fn main() {
             );
         }
         _ => println!("Invalid input for the specified unit!"),
-    };
+    }
+}
+
+fn read_temperature() -> f64 {
+    loop {
+        let input = read_input("Enter the temperature you want to convert:");
+        match input.trim().parse::<f64>() {
+            Ok(temperature) => {
+                return temperature;
+            }
+            Err(_) => println!("Temperature is invalid. Please try again."),
+        }
+    }
 }
 
 fn read_input(prompt: &str) -> String {
@@ -42,4 +46,3 @@ fn read_input(prompt: &str) -> String {
 
     input
 }
-
