@@ -1,3 +1,5 @@
+use degree_converter::{celsius_to_fahrenheit, fahrenheit_to_celsius};
+
 fn main() {
     let input = read_input("Enter the temperature you want to convert");
 
@@ -41,10 +43,3 @@ fn read_input(prompt: &str) -> String {
     input
 }
 
-fn fahrenheit_to_celsius(temp: f64) -> f64 {
-    (temp - 32.0) * 5.0 / 9.0
-}
-
-fn celsius_to_fahrenheit(temp: f64) -> f64 {
-    temp * 9.0 / 5.0 + 32.0
-}
