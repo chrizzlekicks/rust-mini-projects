@@ -1,33 +1,48 @@
 fn main() {
-    println!("Enter the temperature in degree you want to convert:");
+    let input = read_input("Enter the temperature you want to convert");
 
-    let mut temperature = String::new();
+    let temperature = match input.trim().parse::<f64>() {
+        Ok(temperature) => temperature,
+        Err(_) => {
+            println!("Temperature is invalid.");
+            return;
+        }
+    };
 
-    std::io::stdin().read_line(&mut temperature).expect("Failed to read line.");
+    let input = read_input("Which unit would you like to convert to? (Fahrenheit or Celsius):");
+    let unit = input.trim().to_lowercase();
 
-    let temperature: f64 = temperature.trim().parse().expect("Temperature is invalid."); 
-
-    println!("To which unit (Fahrenheit or Celsius) you would like to convert:");
-
-    let mut unit = String::new();
-
-    std::io::stdin().read_line(&mut unit).expect("Failed to read line.");
-
-    match unit.trim().to_lowercase().as_str() {
-        "fahrenheit" => {
+    match unit.as_str() {
+        "fahrenheit" | "f" => {
             let converted = celsius_to_fahrenheit(temperature);
-            println!("{temperature} degree Celsius is {converted} degree Fahrenheit.");
-        },
-        "celsius" => {
+            println!(
+                "{temperature} degrees Celsius is {:.2} degrees Fahrenheit.",
+                converted
+            );
+        }
+        "celsius" | "c" => {
             let converted = fahrenheit_to_celsius(temperature);
-            println!("{temperature} degree Fahrenheit is {converted} degree Celsius.");
-        },
+            println!(
+                "{temperature} degrees Fahrenheit is {:.2} degrees Celsius.",
+                converted
+            );
+        }
         _ => println!("Invalid input for the specified unit!"),
     };
 }
 
+fn read_input(prompt: &str) -> String {
+    println!("{prompt}");
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line.");
+
+    input
+}
+
 fn fahrenheit_to_celsius(temp: f64) -> f64 {
-    (temp - 32.0) * 5.0 / 9.0 
+    (temp - 32.0) * 5.0 / 9.0
 }
 
 fn celsius_to_fahrenheit(temp: f64) -> f64 {
