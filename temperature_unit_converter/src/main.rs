@@ -1,38 +1,43 @@
-use degree_converter::{celsius_to_fahrenheit, fahrenheit_to_celsius};
+use degree_converter::{Temperature, Unit};
 
 fn main() {
-    let temperature = read_temperature();
+    let degree = read_degree();
+    let unit = read_unit();
 
-    let input = read_input("Which unit would you like to convert to? (Fahrenheit or Celsius):");
-    let unit = input.trim().to_lowercase();
+    let initial = Temperature::new(degree, unit);
+    let converted = initial.converted();
 
-    match unit.as_str() {
-        "fahrenheit" | "f" => {
-            let converted = celsius_to_fahrenheit(temperature);
-            println!(
-                "{temperature} degrees Celsius is {:.2} degrees Fahrenheit.",
-                converted
-            );
+    println!(
+        "{} degrees {:?} is {:.2} degrees {:?}.",
+        initial.degree(),
+        initial.unit(),
+        converted.degree(),
+        converted.unit(),
+    );
+}
+
+fn read_degree() -> f64 {
+    loop {
+        let degree_input = read_input("Enter the temperature you want to convert:");
+        match degree_input.trim().parse::<f64>() {
+            Ok(value) => return value,
+            Err(_) => {
+                println!("Temperature is invalid. Please try again.");
+            }
         }
-        "celsius" | "c" => {
-            let converted = fahrenheit_to_celsius(temperature);
-            println!(
-                "{temperature} degrees Fahrenheit is {:.2} degrees Celsius.",
-                converted
-            );
-        }
-        _ => println!("Invalid input for the specified unit!"),
     }
 }
 
-fn read_temperature() -> f64 {
+fn read_unit() -> Unit {
     loop {
-        let input = read_input("Enter the temperature you want to convert:");
-        match input.trim().parse::<f64>() {
-            Ok(temperature) => {
-                return temperature;
+        let unit_input =
+            read_input("Which unit is the temperature currently in? (Fahrenheit or Celsius):");
+        match unit_input.trim().to_lowercase().as_str() {
+            "fahrenheit" | "f" => return Unit::Fahrenheit,
+            "celsius" | "c" => return Unit::Celsius,
+            _ => {
+                println!("Invalid input for the specified unit!");
             }
-            Err(_) => println!("Temperature is invalid. Please try again."),
         }
     }
 }
