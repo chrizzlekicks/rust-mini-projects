@@ -2,10 +2,13 @@ use degree_converter::{Temperature, Unit};
 
 fn main() {
     let degree = read_degree();
-    let unit = read_unit();
+    let source_unit =
+        read_unit("Which unit is the temperature currently in? (Fahrenheit or Celsius):");
 
-    let initial = Temperature::new(degree, unit);
-    let converted = initial.converted();
+    let initial = Temperature::new(degree, source_unit);
+
+    let target_unit = read_unit("Into which unit you would like to convert to:");
+    let converted = initial.to(target_unit);
 
     println!(
         "{} degrees {:?} is {:.2} degrees {:?}.",
@@ -28,10 +31,9 @@ fn read_degree() -> f64 {
     }
 }
 
-fn read_unit() -> Unit {
+fn read_unit(prompt: &str) -> Unit {
     loop {
-        let unit_input =
-            read_input("Which unit is the temperature currently in? (Fahrenheit or Celsius):");
+        let unit_input = read_input(prompt);
         match unit_input.trim().to_lowercase().as_str() {
             "fahrenheit" | "f" => return Unit::Fahrenheit,
             "celsius" | "c" => return Unit::Celsius,

@@ -4,6 +4,7 @@ pub enum Unit {
     Fahrenheit,
 }
 
+#[derive(Clone, Copy)]
 pub struct Temperature {
     degree: f64,
     unit: Unit,
@@ -30,10 +31,16 @@ impl Temperature {
         self.unit
     }
 
-    pub fn converted(&self) -> Temperature {
-        match self.unit {
-            Unit::Celsius => Temperature::new(celsius_to_fahrenheit(self.degree), Unit::Fahrenheit),
-            Unit::Fahrenheit => Temperature::new(fahrenheit_to_celsius(self.degree), Unit::Celsius),
+    pub fn to(&self, target: Unit) -> Temperature {
+        match (self.unit, target) {
+            (Unit::Celsius, Unit::Celsius) => *self,
+            (Unit::Fahrenheit, Unit::Fahrenheit) => *self,
+            (Unit::Fahrenheit, Unit::Celsius) => {
+                Temperature::new(fahrenheit_to_celsius(self.degree), target)
+            }
+            (Unit::Celsius, Unit::Fahrenheit) => {
+                Temperature::new(celsius_to_fahrenheit(self.degree), target)
+            }
         }
     }
 }
@@ -69,7 +76,7 @@ mod tests {
     #[test]
     fn test_converted_from_celsius_changes_unit() {
         let temp = Temperature::new(0.0, Unit::Celsius);
-        let converted = temp.converted();
+        let converted = temp.to(Unit::Fahrenheit);
 
         assert!(matches!(converted.unit(), Unit::Fahrenheit));
     }
@@ -77,7 +84,7 @@ mod tests {
     #[test]
     fn test_converted_from_fahrenheit_changes_unit() {
         let temp = Temperature::new(32.0, Unit::Fahrenheit);
-        let converted = temp.converted();
+        let converted = temp.to(Unit::Celsius);
 
         assert!(matches!(converted.unit(), Unit::Celsius));
     }
@@ -85,7 +92,7 @@ mod tests {
     #[test]
     fn test_converted_from_celsius_changes_degree() {
         let temp = Temperature::new(0.0, Unit::Celsius);
-        let converted = temp.converted();
+        let converted = temp.to(Unit::Fahrenheit);
 
         assert_eq!(converted.degree(), 32.0);
     }
@@ -93,24 +100,26 @@ mod tests {
     #[test]
     fn test_converted_from_fahrenheit_changes_degree() {
         let temp = Temperature::new(32.0, Unit::Fahrenheit);
-        let converted = temp.converted();
+        let converted = temp.to(Unit::Celsius);
 
         assert_eq!(converted.degree(), 0.0);
     }
 
     #[test]
-    fn test_converted_twice_returns_original_unit() {
-        let temp = Temperature::new(10.0, Unit::Celsius);
-        let converted_twice = temp.converted().converted();
+    fn test_to_same_unit_keeps_celsius_unchanged() {
+        let temp = Temperature::new(25.0, Unit::Celsius);
+        let converted = temp.to(Unit::Celsius);
 
-        assert!(matches!(converted_twice.unit(), Unit::Celsius));
+        assert_eq!(converted.degree(), 25.0);
+        assert!(matches!(converted.unit(), Unit::Celsius));
     }
 
     #[test]
-    fn test_converted_twice_returns_original_degree() {
-        let temp = Temperature::new(10.0, Unit::Celsius);
-        let converted_twice = temp.converted().converted();
+    fn test_to_same_unit_keeps_fahrenheit_unchanged() {
+        let temp = Temperature::new(77.0, Unit::Fahrenheit);
+        let converted = temp.to(Unit::Fahrenheit);
 
-        assert_eq!(converted_twice.degree(), 10.0);
+        assert_eq!(converted.degree(), 77.0);
+        assert!(matches!(converted.unit(), Unit::Fahrenheit));
     }
 }
