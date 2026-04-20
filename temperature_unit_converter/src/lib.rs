@@ -1,4 +1,5 @@
-#[derive(Debug)]
+use std::fmt;
+
 pub enum Unit {
     Celsius,
     Fahrenheit,
@@ -15,6 +16,21 @@ fn fahrenheit_to_celsius(temp: f64) -> f64 {
 
 fn celsius_to_fahrenheit(temp: f64) -> f64 {
     temp * 9.0 / 5.0 + 32.0
+}
+
+impl fmt::Display for Unit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Unit::Celsius => write!(f, "Celsius"),
+            Unit::Fahrenheit => write!(f, "Fahrenheit"),
+        }
+    }
+}
+
+impl fmt::Display for Temperature {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.degree)
+    }
 }
 
 impl Temperature {
