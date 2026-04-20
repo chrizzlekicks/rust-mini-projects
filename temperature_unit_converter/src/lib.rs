@@ -1,10 +1,9 @@
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug)]
 pub enum Unit {
     Celsius,
     Fahrenheit,
 }
 
-#[derive(Clone, Copy)]
 pub struct Temperature {
     degree: f64,
     unit: Unit,
@@ -28,18 +27,21 @@ impl Temperature {
     }
 
     pub fn unit(&self) -> Unit {
-        self.unit
+        match self.unit {
+            Unit::Celsius => Unit::Celsius,
+            Unit::Fahrenheit => Unit::Fahrenheit,
+        }
     }
 
     pub fn to(&self, target: Unit) -> Temperature {
-        match (self.unit, target) {
-            (Unit::Celsius, Unit::Celsius) => *self,
-            (Unit::Fahrenheit, Unit::Fahrenheit) => *self,
+        match (self.unit(), target) {
+            (Unit::Celsius, Unit::Celsius) => Temperature::new(self.degree, self.unit()),
+            (Unit::Fahrenheit, Unit::Fahrenheit) => Temperature::new(self.degree, self.unit()),
             (Unit::Fahrenheit, Unit::Celsius) => {
-                Temperature::new(fahrenheit_to_celsius(self.degree), target)
+                Temperature::new(fahrenheit_to_celsius(self.degree), Unit::Celsius)
             }
             (Unit::Celsius, Unit::Fahrenheit) => {
-                Temperature::new(celsius_to_fahrenheit(self.degree), target)
+                Temperature::new(celsius_to_fahrenheit(self.degree), Unit::Fahrenheit)
             }
         }
     }
