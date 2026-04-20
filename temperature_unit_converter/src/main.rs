@@ -11,7 +11,7 @@ fn main() {
     let converted = initial.to(target_unit);
 
     println!(
-        "{initial} degrees {} is {converted:.2} degrees {}.",
+        "{initial} degrees {} is {converted} degrees {}.",
         initial.unit(),
         converted.unit(),
     );

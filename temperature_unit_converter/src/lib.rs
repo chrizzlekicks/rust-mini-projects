@@ -1,5 +1,6 @@
 use std::fmt;
 
+#[derive(Clone, Copy)]
 pub enum Unit {
     Celsius,
     Fahrenheit,
@@ -29,7 +30,7 @@ impl fmt::Display for Unit {
 
 impl fmt::Display for Temperature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.degree)
+        write!(f, "{:.2}", self.degree)
     }
 }
 
@@ -43,21 +44,18 @@ impl Temperature {
     }
 
     pub fn unit(&self) -> Unit {
-        match self.unit {
-            Unit::Celsius => Unit::Celsius,
-            Unit::Fahrenheit => Unit::Fahrenheit,
-        }
+        self.unit
     }
 
     pub fn to(&self, target: Unit) -> Temperature {
-        match (self.unit(), target) {
-            (Unit::Celsius, Unit::Celsius) => Temperature::new(self.degree, self.unit()),
-            (Unit::Fahrenheit, Unit::Fahrenheit) => Temperature::new(self.degree, self.unit()),
+        match (self.unit, target) {
+            (Unit::Celsius, Unit::Celsius) => Temperature::new(self.degree, target),
+            (Unit::Fahrenheit, Unit::Fahrenheit) => Temperature::new(self.degree, target),
             (Unit::Fahrenheit, Unit::Celsius) => {
-                Temperature::new(fahrenheit_to_celsius(self.degree), Unit::Celsius)
+                Temperature::new(fahrenheit_to_celsius(self.degree), target)
             }
             (Unit::Celsius, Unit::Fahrenheit) => {
-                Temperature::new(celsius_to_fahrenheit(self.degree), Unit::Fahrenheit)
+                Temperature::new(celsius_to_fahrenheit(self.degree), target)
             }
         }
     }
